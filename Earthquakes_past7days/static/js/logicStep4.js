@@ -31,11 +31,11 @@ let overlays = {
 };
 
 // Create the map object with center, zoom level and default layer.
-//let map = L.map('mapid', {
-	//center: [39.5, -98.5],
-	//zoom: 3,
-	//layers: [streets]
-//})
+let map = L.map('mapid', {
+	center: [39.5, -98.5],
+	zoom: 3,
+	layers: [streets]
+})
 
 // Edit code to have a control to the map that allows the user to change
 // which layers are visible. 
@@ -86,7 +86,7 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
 }
 // Creating a GeoJSON layer with the retrieved data.
 L.geoJson(data, {
-// Turn each feature into a circleMarker on the map for each earthquake location.
+  // Turn each feature into a circleMarker on the map for each earthquake location.
 pointToLayer: function(feature, latlng) {
   console.log(data);
   return L.circleMarker(latlng);  
@@ -98,5 +98,8 @@ pointToLayer: function(feature, latlng) {
     onEachFeature: function(feature, layer) {
       layer.bindPopup("Magnitude: " + feature.properties.mag + "<br>Location: " + feature.properties.place);
     }
-  }).addTo(map);
+  }).addTo(earthquakes);
+
+  // Then add earthquakes layer to the map.
+  earthquakes.addTo(map);
 }); 
