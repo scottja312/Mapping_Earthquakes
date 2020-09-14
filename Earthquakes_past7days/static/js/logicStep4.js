@@ -24,7 +24,7 @@ let baseMaps = {
 // Create the earthquake layer for our map.
 let earthquakes = new L.layerGroup();
 
-// Define an object that contains the overlays.
+// We define an object that contains the overlays.
 // This overlay will be visible all the time.
 let overlays = {
   Earthquakes: earthquakes
@@ -37,8 +37,8 @@ let overlays = {
 	//layers: [streets]
 //})
 
-// Edit code to add a control to the map to allow the user to change
-// which layers are visible.
+// Edit code to have a control to the map that allows the user to change
+// which layers are visible. 
 L.control.layers(baseMaps, overlays).addTo(map);
 
 // Retrieve the earthquake GeoJSON data.
