@@ -15,8 +15,8 @@ let satelliteStreets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/sate
     accessToken: API_KEY
 });
 
-// Create a satellite view tile layer option for the map.
-let Light = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/light-v11/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+// Create a light view tile layer option for the map.
+let light = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/light-v10/tiles/{z}/{x}/{y}?access_token={accessToken}', {
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery (c) <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
     accessToken: API_KEY
@@ -27,22 +27,24 @@ let baseMaps = {
   "Streets": streets,
   "Satellite Streets": satelliteStreets,
   "Light": light
-};
+}
 
 // Create the earthquake layer for our map.
 let earthquakes = new L.layerGroup();
+let tectonicPlates = new L.layerGroup()
 
 // We define an object that contains the overlays.
 // This overlay will be visible all the time.
 let overlays = {
-  Earthquakes: earthquakes
-};
+  "Tectonic Plates": tectonicPlates,
+  "Earthquakes": earthquakes
+}
 
 // Create the map object with center, zoom level and default layer.
 let map = L.map('mapid', {
 	center: [40.7, -94.5],
 	zoom: 3,
-	layers: [streets]
+	layers: [light]
 })
 
 // Edit code to have a control to the map that allows the user to change
@@ -63,7 +65,7 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
       radius: getRadius(feature.properties.mag),
       stroke: true,
       weight: 0.5
-  };
+  }
 }
 // This function determines the color of the circle based on the magnitude of the earthquake.
   function getColor(magnitude) {
@@ -106,15 +108,15 @@ pointToLayer: function(feature, latlng) {
     onEachFeature: function(feature, layer) {
       layer.bindPopup("Magnitude: " + feature.properties.mag + "<br>Location: " + feature.properties.place);
     }
-  }).addTo(earthquakes);
+  }).addTo(earthquakes)
 
   // Then add earthquakes layer to the map.
-  earthquakes.addTo(map);
+  earthquakes.addTo(map)
 
   // Add legend control option to the map.
   let legend = L.control({
     position: 'bottomright'
-  });
+  })
 
   // Add details for the legend.
   legend.onAdd = function() {
@@ -137,14 +139,19 @@ pointToLayer: function(feature, latlng) {
         magnitudes[i] + (magnitudes[i + 1] ? '&ndash;' + magnitudes[i + 1] + '<br>' : '+');
         }
         return div;
-    };
+    }
 
   // Add legend layer to map. 
-  legend.addTo(map);
+  legend.addTo(map)
 
   // Place d3.json() call for the tectonic plate data.
-  d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson").then(function(data) {
+  d3.json("https://raw.githubusercontent.com/fraxen/tectonicplates/master/GeoJSON/PB2002_boundaries.json").then(function(plateData) {
+    L.geoJson(plateData, {
+    color: "#ff6500",
+    weight: 2  
+    }).addTo(tectonicPlates)
 
-
-
+  // Add legend layer to map. 
+    tectonicPlates.addTo(map)
+  })
 });
